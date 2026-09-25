@@ -50,15 +50,14 @@ def sauceMobileBetaEnabled = !sauceMobileBetaDisabled && Boolean.valueOf(sauceMo
 android {
     signingConfigs {}
 
-    compileSdkVersion 31
-    buildToolsVersion "30.0.2"
+    compileSdkVersion 35
     useLibrary 'org.apache.http.legacy'
     ndkVersion '21.3.6528147'
 
     defaultConfig {
         applicationId "com.saucelabs.mydemoapp.android"
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 35
         versionCode 1 // CI automatically replaces this
         versionName "1.0.0" // CI automatically replaces this
         multiDexEnabled true
@@ -73,7 +72,7 @@ android {
         buildConfigField "String", "SAUCE_ENVIRONMENT", buildConfigString(sauceEnvironment)
         buildConfigField "String", "SAUCE_DISTRIBUTION_ID", buildConfigString(sauceDistributionId)
     }
-
+    configurations.all { resolutionStrategy { force 'org.jetbrains.kotlin:kotlin-stdlib:1.9.24' force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.24' force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.24' } }
     testOptions {
         animationsDisabled true
 
@@ -85,7 +84,8 @@ android {
     buildTypes {
         debug {
             debuggable true
-            testCoverageEnabled true
+            enableUnitTestCoverage true
+            enableAndroidTestCoverage true
         }
         release {
             minifyEnabled false
@@ -112,10 +112,11 @@ android {
         )
         release.java.srcDir('src/noMobileBeta/java')
     }
-
-    lintOptions {
+    namespace 'com.saucelabs.mydemoapp.android'
+    lint {
         checkReleaseBuilds false
     }
+
 
     signingConfigs {
         debug {
